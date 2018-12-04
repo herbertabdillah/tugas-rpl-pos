@@ -1,3 +1,3 @@
 The quick brown
-anjing jumps
+andjing jumps
 over the lazy dog

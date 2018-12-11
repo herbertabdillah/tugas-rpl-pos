@@ -26,7 +26,7 @@ class App extends Component {
   
   render() {
     return (<div className='container'>
-      <div style={{width:'100%',margin:'auto', backgroundColor:'rgb(67, 160, 71)'}}>
+      {/* <div style={{width:'100%',margin:'auto', backgroundColor:'rgb(67, 160, 71)'}}>
         <div className='header80'>
           <Typography variant="h4" style={{textShadow:'1px 1px #0200004d', color:'white'}}>
             Home
@@ -36,7 +36,7 @@ class App extends Component {
           </Typography>
         </div>
       </div>
-
+      
       <div className='content80'>
         <p>Halo</p>
         <Link to="/park/list">Daftar Layanan</Link><br/>
@@ -49,7 +49,8 @@ class App extends Component {
         <Link to="/admin/park/add">Tambah Taman</Link><br/>
         Moderator<br/>
         <Link to="/admin/park/add">Terima Ulasan</Link><br/>
-      </div>
+      </div> */}
+      <p>Halo</p>
     </div>);
   }
 }

@@ -17,15 +17,16 @@ import Cookies from "js-cookie";
 import Admin from './Admin';
 import Add from './park/Add';
 import List from './park/List';
+import Cashier from './cashier/Cashier';
 const theme = createMuiTheme({
-    palette: {
-        primary: {
-          main: '#43a047',
-        },
-        secondary: {
-          main: '#ffab00',
-        },
-    },
+    // palette: {
+    //     primary: {
+    //       main: '#43a047',
+    //     },
+    //     secondary: {
+    //       main: '#ffab00',
+    //     },
+    // },
     overrides: {
         MuiAppBar:{
             root:{
@@ -45,8 +46,8 @@ const theme = createMuiTheme({
                     height:48,
                     minHeight:48
                 },
-                backgroundColor:'white',
-                color:'gray'
+                // backgroundColor:'white',
+                // color:'gray'
             }
         }
     }
@@ -95,7 +96,8 @@ ReactDOM.render(
                 
                     <NavBar />
                     <Route exact path="/" component={App} />
-                    <Route path="/signin" component={SignIn} />
+                    <Route path="/cashier" component={Cashier} />
+                    {/* <Route path="/signin" component={SignIn} />
                     <Route path="/register" component={Register} />
                     <Route path="/park/view" component={View} />
                     <Route path="/park/list" component={List} />
@@ -103,7 +105,7 @@ ReactDOM.render(
                     <PrivateRoute path="/profile" authorized='user' component={Profile} />
                     <PrivateRoute path="/park/borrow" authorized='user' component={Borrow} />
                     <PrivateRoute exact path="/admin" authorized='admin' component={Admin} />
-                    <PrivateRoute path="/admin/park/add" authorized='admin' component={Add} />
+                    <PrivateRoute path="/admin/park/add" authorized='admin' component={Add} /> */}
                     {/* <Footer />  */}
                 
             </div>

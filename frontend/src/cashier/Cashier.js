@@ -36,14 +36,16 @@ class Cashier extends Component {
     constructor(props){
         super(props);
         this.state = {
-            itemArr: [{"sku":0,"name":"loading","price":0}],
+            itemArr: [{"sku":0,"name":"loading","price":0, "index":0}],
             selectedItemArr: [{"index":0,"qty":0}],
             open: false,
             qtyOpen: false,
             dialogType: 'add',
             qty:0,
             index: 0,
-            newItemFind: ''
+            newItemFind: '',
+            filterNama: '',
+            tambahQty: 0
         }
     }
     componentDidMount(){
@@ -52,21 +54,25 @@ class Cashier extends Component {
                 "sku": 123,
                 "name": "Kopi Liong Gula 20 Sachet",
                 "price": 21000,
+                "index": 0
             },
             {
                 "sku": 124,
                 "name": "Kopi Liong Pahit 20 Sachet",
                 "price": 21000,
+                "index": 1
             },
             {
                 "sku": 234,
                 "name": "Kapal Api 20 Sachet",
                 "price": 23000,
+                "index": 2
             },
             {
                 "sku": 456,
                 "name": "Roti Pandan",
                 "price": 1000,
+                "index": 3
             }    
         ];
         this.setState({itemArr:itemArr});
@@ -143,7 +149,7 @@ class Cashier extends Component {
     }
     DialogQty = (props) => {
         return (
-<Dialog onClose={this.handleQtyClose} open={this.state.qtyOpen} aria-labelledby="simple-dialog-title">
+            <Dialog fullWidth={true} maxWidth = {'md'} onClose={this.handleQtyClose} open={this.state.qtyOpen} aria-labelledby="simple-dialog-title">
                     <DialogTitle id="simple-dialog-title">Ubah Qty</DialogTitle>
                     <div>
                 <TextField
@@ -165,45 +171,53 @@ class Cashier extends Component {
                     Hapus/Ubah Jumlah Barang
                 </Button> 
                     </div>
-                </Dialog>
+            </Dialog>
         );
     }
     ListAdd = () => {
         return(
             <div>
-                {/* <TextField
-                required
-                name='selectedFilter'
-                label="Nama Instansi"
-                style={{ margin: 8, width:"100%" }}
-                margin="normal"
-                value={this.state.namaInstansi}
-                onChange={this.handleChange}
-                /> */}
                 <Grid container spacing={8}>
-                    <Grid item xl={4} md={4} sm={4} xs={4}>
+                    <Grid item xl={3} md={3} sm={3} xs={3}>
                         <Button
                         type='submit'
                         color='primary'
                         variant="contained"
                         fullWidth
-                        onClick={()=>{this.setState({dialogType:'add'});this.handleClickOpen();}}
+                        onClick={()=>{
+                            this.setState({editQty:1});
+                            this.setState({dialogType:'add'});this.handleClickOpen();}}
                         >
-                            Tambah Barang
+                            Tambah
                         </Button>                     
                     </Grid>
-                    <Grid item xl={4} md={4} sm={4} xs={4}>
+                    <Grid item xl={3} md={3} sm={3} xs={3}>
                         <Button
                         type='submit'
                         color='primary'
                         variant="contained"
                         fullWidth
-                        onClick={()=>{this.setState({dialogType:'void'});this.handleClickOpen();}}
+                        onClick={()=>{
+                            this.deleteItem(this.state.index);
+                        }}
                         >
-                            Hapus/Ubah Jumlah Barang
+                            Hapus
                         </Button>                      
                     </Grid>
-                    <Grid item xl={4} md={4} sm={4} xs={4}>
+                    <Grid item xl={3} md={3} sm={3} xs={3}>
+                        <Button
+                        type='submit'
+                        color='primary'
+                        variant="contained"
+                        fullWidth
+                        onClick={()=>{
+                            this.handleQtyClickOpen();
+                        }}
+                        >
+                            Ubah Jumlah
+                        </Button>                      
+                    </Grid>
+                    <Grid item xl={3} md={3} sm={3} xs={3}>
                         <Button
                         type='submit'
                         color='secondary'
@@ -245,14 +259,20 @@ class Cashier extends Component {
                 <TableBody>
                     {this.state.selectedItemArr.filter(
                         (item) => {
-                            return true;
+                            let patternNama = new RegExp(this.state.filterNama, 'i')
+                            return patternNama.test(this.state.itemArr[item.index].name);
                         }
                     ).map(
                         (item) => {
                             console.log(this.state);
                             let asdf = this.state.itemArr[item.index];
                             return(
-                                <TableRow key={item.id}>
+                                <TableRow key={item.index} onClick={()=>{
+                                    this.setState({
+                                        qty: item.qty,
+                                        index: item.index
+                                    })
+                                }}>
                                     <TableCell>{asdf.sku}</TableCell>
                                     <TableCell>{asdf.name}</TableCell>
                                     <TableCell>{asdf.price}</TableCell>
@@ -289,7 +309,7 @@ class Cashier extends Component {
     DialogTambahBarang = () => {
         let d = null;
         if(this.state.dialogType === 'add'){
-            d = <Dialog onClose={this.handleClose} open={this.state.open} aria-labelledby="simple-dialog-title" style={{maxWidth:"90%",minWidth:"80%"}}>
+            d = <Dialog fullWidth={true} maxWidth = {'md'} onClose={this.handleClose} open={this.state.open} aria-labelledby="simple-dialog-title">
                     <DialogTitle id="simple-dialog-title">Tambah Barang</DialogTitle>
                     <div>
                         <div> 
@@ -300,6 +320,15 @@ class Cashier extends Component {
                             style={{ margin: 8, width:'40%' }}
                             margin="normal"
                             value={this.state.newItemFind}
+                            onChange={this.handleChange}
+                            />            
+                        <TextField
+                            required
+                            name='tambahQty'
+                            label="Qty"
+                            style={{ margin: 8, width:'40%' }}
+                            margin="normal"
+                            value={this.state.tambahQty}
                             onChange={this.handleChange}
                             />                            
                         </div>
@@ -324,13 +353,13 @@ class Cashier extends Component {
                                 return regex.test(item.name);
                             }
                         ).map(
-                            (item, index) => {
+                            (item) => {
                                 return(
-                                    <TableRow key={item.id} onClick={() => {
+                                    <TableRow key={item.index} onClick={() => {
                                         // let selectedItemArr = this.state.selectedItemArr;
                                         // selectedItemArr.push({index: index, qty: 1});
                                         // this.setState({selectedItemArr: selectedItemArr});
-                                        this.tambahBarang(index, 1);
+                                        this.tambahBarang(item.index, Number.parseInt(this.state.tambahQty));
                                         this.handleClose();
                                     }}>
                                         <TableCell>{item.sku}</TableCell>
@@ -344,92 +373,7 @@ class Cashier extends Component {
                 </Table>                    
                     </div>
                 </Dialog>;
-        } else {
-            d =
-            <Dialog onClose={this.handleClose} open={this.state.open} aria-labelledby="simple-dialog-title">   
-                    <DialogTitle id="simple-dialog-title">Tambah Barang</DialogTitle>
-                    <div>
-                        <div> </div>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>
-                                        SKU
-                                    </TableCell>
-                                    <TableCell>
-                                        Nama
-                                    </TableCell>
-                                    <TableCell>
-                                        Harga
-                                    </TableCell>
-                                    <TableCell>
-                                        Qty
-                                    </TableCell>         
-                                    <TableCell>
-                                        Total
-                                    </TableCell>   
-                                    <TableCell>
-                                        Action
-                                    </TableCell>                                                                                          
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {this.state.selectedItemArr.filter(
-                                    (item) => {
-                                        return true;
-                                    }
-                                ).map(
-                                    (item) => {
-                                        console.log(this.state);
-                                        let asdf = this.state.itemArr[item.index];
-                                        let qty = item.qty;
-                                        return(
-                                            <TableRow key={item.id}>
-                                                <TableCell>{asdf.sku}</TableCell>
-                                                <TableCell>{asdf.name}</TableCell>
-                                                <TableCell>{asdf.price}</TableCell>
-                                                <TableCell>
-                                                    {/* <TextField
-                                                    required
-                                                    name='qty'
-                                                    label="qty"
-                                                    style={{width:'40%'}}
-                                                    margin="normal"
-                                                    value={this.state.qty}
-                                                    onChange={this.handleChange}
-                                                    />  */}
-                                                    {item.qty}
-                                                </TableCell>
-                                                <TableCell>{item.qty * asdf.price}</TableCell>
-                                                <TableCell>
-                                                    <Button
-                                                        type='submit'
-                                                        color='primary'
-                                                        variant="contained"
-                                                        style={{width: '20%'}}
-                                                        onClick={()=>{this.setState({qty:item.qty,index:item.index});this.handleQtyClickOpen();this.handleClose();}}
-                                                    >
-                                                        Ubah Jumlah
-                                                    </Button>                                                     
-                                                    <Button
-                                                        type='submit'
-                                                        color='secondary'
-                                                        variant="contained"
-                                                        style={{width: '20%'}}
-                                                        onClick={()=>{this.deleteItem(item.index);this.handleClose();}}
-                                                    >
-                                                        Hapus
-                                                    </Button> 
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    }
-                                )}
-                            </TableBody>
-                        </Table>             
-                    </div>
-                </Dialog>;
-        }
+        } 
         return d;
     }
     render(props){
@@ -448,11 +392,21 @@ class Cashier extends Component {
                     </div>
                 </div>        
                 <div className='content80' center={1}>        
-                      <this.DialogTambahBarang />
-                      <this.DialogQty />
-                      <this.Total />
-                      <this.ListAdd />
-                      <this.ItemTable />
+                        <this.DialogTambahBarang />
+                        <this.DialogQty />
+                        <this.Total />
+                        <this.ListAdd />
+                        <TextField
+                            name='filterNama'
+                            label="Filter nama barang"
+                            style={{ margin: 8, width:"100%" }}
+                            margin="normal"
+                            value={this.state.filterNama}
+                            onChange={this.handleChange}
+                        />
+                        <Paper>
+                            <this.ItemTable />
+                        </Paper>
                 </div>
             </div>  
         );

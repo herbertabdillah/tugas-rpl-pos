@@ -36,7 +36,7 @@ class Cashier extends Component {
     constructor(props){
         super(props);
         this.state = {
-            suppliers: [{"kode":0,"nama":"loading","alamat":"loading","kontak":"loading"}],
+            suppliers: [{"kode":0,"nama":"loading","alamat":"loading","kontak":"loading", index:0}],
             open: false,
             qtyOpen: false,        
             index: 0,
@@ -45,6 +45,7 @@ class Cashier extends Component {
             tambahNama: '',
             tambahKontak: '',
             tambahAlamat: '',
+            filterNama: '',
             mode:''
         }
     }
@@ -55,24 +56,28 @@ class Cashier extends Component {
                 "nama": "Bakti Karya",
                 "alamat": "Jalan Abdul Wahab",
                 "kontak": "021 77881122",
+                "index": 0
             },
             {
                 "kode": 2,
                 "nama": "Indogrosir",
                 "alamat": "Jalan Raya Parung",
                 "kontak": "021 77992233",
-            } 
+                "index": 1
+            }
         ];
         this.setState({suppliers:suppliersArr});    
     }
     prosesTambahSupplier = () => {
         let suppliersArr = this.state.suppliers;
         var i = suppliersArr[suppliersArr.length - 1].kode + 1;
+        var j = suppliersArr[suppliersArr.length - 1].index + 1;
         suppliersArr.push({
             "kode": i,
             "nama": this.state.tambahNama,
             "alamat": this.state.tambahAlamat,
             "kontak": this.state.tambahKontak,
+            "index": j
         });
         this.setState({suppliers: suppliersArr});
     }
@@ -122,13 +127,13 @@ class Cashier extends Component {
             aksi = () => {this.prosesEditSupplier()};
         }
         return (
-            <Dialog onClose={this.handleQtyClose} open={this.state.qtyOpen} aria-labelledby="simple-dialog-title">
+            <Dialog fullWidth={true} maxWidth = {'md'} onClose={this.handleQtyClose} open={this.state.qtyOpen} aria-labelledby="simple-dialog-title">
                 <DialogTitle id="simple-dialog-title">Ubah Tambah Supplier</DialogTitle>
                 <TextField
                 required
                 name='tambahNama'
                 label="Nama"
-                style={{ margin: 8, width:"100%" }}
+                style={{ margin: 8, width:"80%" }}
                 margin="normal"
                 value={this.state.tambahNama}
                 onChange={this.handleChange}
@@ -137,7 +142,7 @@ class Cashier extends Component {
                 required
                 name='tambahAlamat'
                 label="Alamat"
-                style={{ margin: 8, width:"100%" }}
+                style={{ margin: 8, width:"80%" }}
                 margin="normal"
                 value={this.state.tambahAlamat}
                 onChange={this.handleChange}
@@ -146,7 +151,7 @@ class Cashier extends Component {
                 required
                 name='tambahKontak'
                 label="Kontak"
-                style={{ margin: 8, width:"100%" }}
+                style={{ margin: 8, width:"80%" }}
                 margin="normal"
                 value={this.state.tambahKontak}
                 onChange={this.handleChange}
@@ -170,7 +175,7 @@ class Cashier extends Component {
                 required
                 name='selectedFilter'
                 label="Nama Instansi"
-                style={{ margin: 8, width:"100%" }}
+                style={{ margin: 8, width:"80%" }}
                 margin="normal"
                 value={this.state.namaInstansi}
                 onChange={this.handleChange}
@@ -239,13 +244,15 @@ class Cashier extends Component {
                 <TableBody>
                     {this.state.suppliers.filter(
                         (supplier) => {
-                            return true;
+                            let patternNama = new RegExp(this.state.filterNama, 'i')
+                            return patternNama.test(supplier.nama);
                         }
                     ).map(
-                        (supplier, index) => {
+                        (supplier) => {
                             console.log(this.state);
                             return(
                                 <TableRow key={supplier.kode} onClick={()=> {
+                                    let index = supplier.index;
                                     this.setState({selected:index});
                                     let selectedSupplier = this.state.suppliers[index];
                                     this.setState({
@@ -270,9 +277,10 @@ class Cashier extends Component {
             <Typography variant="h5">
                 {this.state.suppliers[selected].nama}
             </Typography>
-            Kode : {this.state.suppliers[selected].kode}
-            Alamat : {this.state.suppliers[selected].alamat}
-            Kontak : {this.state.suppliers[selected].kontak}
+            Kode : {this.state.suppliers[selected].kode} <br/>
+            Alamat : {this.state.suppliers[selected].alamat} <br/>
+            Kontak : {this.state.suppliers[selected].kontak} <br/>
+            <br/>
         </div>;
     }
 
@@ -294,12 +302,24 @@ class Cashier extends Component {
                 <div className='content80' center={1}> 
                       <this.DialogQty />
                       <this.TombolAtas />
-                      <Grid container>
+                        <TextField
+                            name='filterNama'
+                            label="Filter nama supplier"
+                            style={{ margin: 8, width:"80%" }}
+                            margin="normal"
+                            value={this.state.filterNama}
+                            onChange={this.handleChange}
+                        />
+                      <Grid container spacing={24} style={{marginTop:'16px'}}>
                         <Grid item xs={6} sm={6} md={6} xl={6}>
-                            <this.ItemTable />
+                            <Paper>
+                                <this.ItemTable />
+                            </Paper>
                         </Grid>
                         <Grid item xs={6} sm={6} md={6} xl={6}>
-                            <this.PanelKanan />
+                            <Paper style={{padding:24}}>
+                                <this.PanelKanan />
+                            </Paper>
                         </Grid>
                       </Grid>
                       

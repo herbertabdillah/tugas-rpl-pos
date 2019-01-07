@@ -152,22 +152,26 @@ toggleDrawer = (side, open) => () => {
         <List>
           <ListItem button>
               <ListItemIcon><Description className={classes.icon} /></ListItemIcon>
-              <ListItemText primary="Daftar Layanan" />
+              <ListItemText primary="Laporan" />
             </ListItem>
-            <Link to="/park/list">
+            <Link to="/cashier">
               <ListItem button>
                 <ListItemIcon><FormatListBulleted className={classes.icon} /></ListItemIcon>
-                <ListItemText primary="Daftar Taman" />
+                <ListItemText primary="Kasir" />
               </ListItem>  
             </Link>
-            <ListItem button>
-              <ListItemIcon><Group className={classes.icon} /></ListItemIcon>
-              <ListItemText primary="Instansi Saya" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon><CheckCircle className={classes.icon} /></ListItemIcon>
-              <ListItemText primary="Dashboard Peminjaman" />
-            </ListItem>   
+            <Link to="/supplier">
+              <ListItem button>
+                <ListItemIcon><FormatListBulleted className={classes.icon} /></ListItemIcon>
+                <ListItemText primary="Supplier" />
+              </ListItem>  
+            </Link> 
+            <Link to="/barang">
+              <ListItem button>
+                <ListItemIcon><FormatListBulleted className={classes.icon} /></ListItemIcon>
+                <ListItemText primary="Barang" />
+              </ListItem>  
+            </Link>   
         </List>
         <Divider />
         {Auth.getUserData().role ==='admin' && (

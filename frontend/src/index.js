@@ -18,6 +18,8 @@ import Admin from './Admin';
 import Add from './park/Add';
 import List from './park/List';
 import Cashier from './cashier/Cashier';
+import Supplier from './supplier/Supplier';
+import Barang from './barang/Barang';
 const theme = createMuiTheme({
     // palette: {
     //     primary: {
@@ -97,6 +99,8 @@ ReactDOM.render(
                     <NavBar />
                     <Route exact path="/" component={App} />
                     <Route path="/cashier" component={Cashier} />
+                    <Route path="/supplier" component={Supplier} />
+                    <Route path="/barang" component={Barang} />
                     {/* <Route path="/signin" component={SignIn} />
                     <Route path="/register" component={Register} />
                     <Route path="/park/view" component={View} />

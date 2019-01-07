@@ -45,7 +45,11 @@ class Cashier extends Component {
             index: 0,
             newItemFind: '',
             filterNama: '',
-            tambahQty: 0
+            tambahQty: 0,
+            total:0,
+            kasihUang:0,
+            dialogPembayaran: false,
+            dialogStruk: false
         }
     }
     componentDidMount(){
@@ -108,11 +112,56 @@ class Cashier extends Component {
         this.setState({
           qtyOpen: true,
         });
-      };
-    
+      };    
       handleQtyClose = value => {
         this.setState({ qtyOpen: false });
-      };      
+      };  
+      handlePembayaranClickOpen = () => {
+        this.setState({
+            dialogPembayaran: true,
+        });
+      };    
+      handlePembayaranClose = value => {
+        this.setState({ dialogPembayaran: false });
+      };       
+      handleStrukClickOpen = () => {
+        this.setState({
+          dialogStruk: true,
+        });
+      };    
+      handleStrukClose = value => {
+        this.setState({ dialogStruk: false });
+      };  
+      Struk = () => {
+
+        return <div>
+            Minimarket 112<br/>
+            Jl. Raya Mukhtar No. 112<br/>
+            Sawangan, Kota Depok 16511<br/>
+            _____________________________________<br/>
+            Barang                         Total<br/>
+            {this.state.selectedItemArr.map((selectedItem) => {
+                let item = this.state.itemArr[selectedItem.index];
+                let nama = item.name;
+                let harga = item.price;
+                let qty = selectedItem.qty;
+                let total = harga * qty;
+                return <div>
+
+            {nama}<br/>
+            {harga} x {qty}             {total}<br/><br/>
+
+                </div>;
+            })}
+            _____________________________________<br/>
+            Total :<br/>
+            Bayar : <br/>
+            Kembali : <br/>
+            _____________________________________<br/>
+            Terimakasih atas kunjungannya
+
+        </div>;
+      }      
     tambahBarang = (index, qty) => {
         let selectedItemArr = this.state.selectedItemArr;
         let isFound = false;
@@ -161,7 +210,7 @@ class Cashier extends Component {
                 value={this.state.qty}
                 onChange={this.handleChange}
                 />         
-                                <Button
+                <Button
                     type='submit'
                     color='secondary'
                     variant="contained"
@@ -223,7 +272,7 @@ class Cashier extends Component {
                         color='secondary'
                         variant="contained"
                         fullWidth
-                        onClick={()=>{this.setState({dialogType:'void'});this.handleClickOpen();}}
+                        onClick={()=>{this.handlePembayaranClickOpen();}}
                         >
                             Lanjutkan Pembayaran
                         </Button>                           
@@ -286,7 +335,7 @@ class Cashier extends Component {
             </Table>
         );
     }
-    Total = () => {
+    hitungTotal = () => {
         let total = 0;
         this.state.selectedItemArr.filter(
             (item) => {
@@ -298,11 +347,15 @@ class Cashier extends Component {
                 total = total + (asdf.price * item.qty);
             }
         )
+        return total;
+    }
+    Total = () => {
+        let total = this.hitungTotal()
         return (
             <div>
-                      <Typography variant="h5" style={{textShadow:'1px 1px #0200004d', color:'black'}}>
-                      Total : {total}
-                      </Typography>            
+                <Typography variant="h5" style={{textShadow:'1px 1px #0200004d', color:'black'}}>
+                Total : {total}
+                </Typography>            
             </div>
         );
     }
@@ -376,6 +429,49 @@ class Cashier extends Component {
         } 
         return d;
     }
+    DialogPembayaran = () => {
+        let total = this.hitungTotal();
+        let kembali = this.state.kasihUang - total;
+        return <Dialog fullWidth={true} maxWidth = {'md'} onClose={this.handlePembayaranClose} open={this.state.dialogPembayaran} aria-labelledby="simple-dialog-title">
+        
+            <DialogTitle id="simple-dialog-title">Pembayaran</DialogTitle> 
+                <Button
+                    type='submit'
+                    color='secondary'
+                    variant="contained"
+                    style={{width: '20%'}}
+                    onClick={()=>{
+                        this.handlePembayaranClose();
+                        this.handleStrukClickOpen();
+                    }}
+                >
+                    Lanjut
+                </Button> 
+                <Typography variant="h5" style={{textShadow:'1px 1px #0200004d', color:'black'}}>
+                    Total : {total}
+                </Typography>   
+                <Typography variant="h5" style={{textShadow:'1px 1px #0200004d', color:'black'}}>
+                    Kembali : {kembali}
+                </Typography>
+                <TextField
+                    required
+                    name='kasihUang'
+                    label="Filter Nama"
+                    style={{ margin: 8, width:'40%' }}
+                    margin="normal"
+                    value={this.state.kasihUang}
+                    onChange={this.handleChange}
+                />            
+
+        </Dialog>;
+    } 
+    DialogStruk = () => {        
+        return <Dialog fullWidth={true} maxWidth = {'md'} onClose={this.handleStrukClose} open={this.state.dialogStruk} aria-labelledby="simple-dialog-title">
+        
+            <DialogTitle id="simple-dialog-title">Pembayaran</DialogTitle> 
+                <this.Struk />
+        </Dialog>;
+    }       
     render(props){
       
 
@@ -391,8 +487,10 @@ class Cashier extends Component {
                       </Typography> */}
                     </div>
                 </div>        
-                <div className='content80' center={1}>        
+                <div className='content80' center={1}>    
+                        <this.DialogStruk />    
                         <this.DialogTambahBarang />
+                        <this.DialogPembayaran />
                         <this.DialogQty />
                         <this.Total />
                         <this.ListAdd />

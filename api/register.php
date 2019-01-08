@@ -8,7 +8,7 @@ $mysql = "INSERT INTO barang
 if(!mysqli_query($conn, $mysql))
 	die (mysqli_error($conn));
 
-echo"<script>alert('Data berhasil dimasukan');window.location.href='index.php?module=lihat';</script>";
+echo"<script>alert('Data berhasil dimasukan');window.location.href='lihat.php';</script>";
 
 mysqli_close($conn);
 ?>

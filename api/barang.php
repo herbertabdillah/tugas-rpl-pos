@@ -8,13 +8,17 @@
 </style>
 <form action="register.php" method="post">
 	<p>&nbsp;</p>
-	
+	<center>Tambah Barang</center>
 	<table width="600" border="0" align="center">
 		<tr>
 			<td width="163">
 		<tr>	
 			<td>Nama Barang		:</td>
 			<td><input type="text" name="namaBarang" /></td>
+		</tr>
+		<tr>	
+			<td>Harga Barang		:</td>
+			<td><input type="text" name="hargaBarang" /></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>

@@ -5,7 +5,7 @@
 	</head>
 	
 	<body>
-		<h2>Daftar Barang</h2><br/>
+		<h2>Transaksi</h2><br/>
 		<?php
 		include"koneksi.php";
 		$select="select * from barang";
@@ -17,7 +17,7 @@
 				<td width="5%"><center>ID Barang</td>
 				<td width="15%"><center>Nama Barang</td>
 				<td width="15%"><center>Harga Barang</td>
-				<td width="15%"><center>ID Supplier</td>
+				<td width="15%"><center>Jumlah Barang</td>
 				<td width="15%">Aksi</td>
 			</tr>
 		
@@ -29,12 +29,10 @@
 			
 				<tr>
 				<td width="5%"><center><?php echo $buff['idBarang'];?></td>
-					<td width="15%"><?php echo $buff['namaBarang'];?></td>
-					<td width="15%"><?php echo $buff['hargaBarang'];?></td>
-					<td width="15%"><?php echo $buff['idSupplier'];?></td>
+					<td width="15%"></td>
+					<td width="15%"></td>
+					<td width="15%"></td>
 					<td width="20%">
-					<a href="edit.php?idBarang=<?php echo $buff['idBarang'];?>">Edit</a>
-					<a href="hapus.php?idBarang=<?php echo $buff['idBarang'];?>">Hapus</a></td>
 				</tr>
 		
 		<?php

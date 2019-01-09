@@ -49,7 +49,10 @@ class Cashier extends Component {
             total:0,
             kasihUang:0,
             dialogPembayaran: false,
-            dialogStruk: false
+            dialogStruk: false,
+            // strukTotal: 0,
+            // strukKembali: 0,
+            // strukBayar: 0
         }
     }
     componentDidMount(){
@@ -132,32 +135,48 @@ class Cashier extends Component {
       handleStrukClose = value => {
         this.setState({ dialogStruk: false });
       };  
+      strukTotal = 0;
+      strukKembali = 0;
+      strukBayar = 0;
       Struk = () => {
+        let objToday = new Date(),
+        weekday = new Array('Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'),
+        dayOfWeek = weekday[objToday.getDay()],
+        domEnder = function() { var a = objToday; if (/1/.test(parseInt((a + "").charAt(0)))) return "th"; a = parseInt((a + "").charAt(1)); return 1 == a ? "st" : 2 == a ? "nd" : 3 == a ? "rd" : "th" }(),
+        dayOfMonth = today + ( objToday.getDate() < 10) ? '0' + objToday.getDate() + domEnder : objToday.getDate(),
+        months = new Array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'),
+        curMonth = months[objToday.getMonth()],
+        curYear = objToday.getFullYear(),
+        curHour = objToday.getHours() > 12 ? objToday.getHours() - 12 : (objToday.getHours() < 10 ? "0" + objToday.getHours() : objToday.getHours()),
+        curMinute = objToday.getMinutes() < 10 ? "0" + objToday.getMinutes() : objToday.getMinutes(),
+        curSeconds = objToday.getSeconds() < 10 ? "0" + objToday.getSeconds() : objToday.getSeconds(),
+        curMeridiem = objToday.getHours() > 12 ? "PM" : "AM";
+        let today = curHour + ":" + curMinute + "." + curSeconds + " " + curMeridiem + " " + dayOfMonth + " " + curMonth + " " + curYear;
 
-        return <div>
+        return <div id ="printableArea">
             Minimarket 112<br/>
             Jl. Raya Mukhtar No. 112<br/>
             Sawangan, Kota Depok 16511<br/>
-            _____________________________________<br/>
-            Barang                         Total<br/>
+            <br/>
+            {today}
+            <br/>
+            <br/>
             {this.state.selectedItemArr.map((selectedItem) => {
                 let item = this.state.itemArr[selectedItem.index];
                 let nama = item.name;
                 let harga = item.price;
                 let qty = selectedItem.qty;
                 let total = harga * qty;
-                return <div>
-
+                return <div>        
             {nama}<br/>
-            {harga} x {qty}             {total}<br/><br/>
-
+            {harga} x {qty} = {total}<br/><br/>
                 </div>;
             })}
-            _____________________________________<br/>
-            Total :<br/>
-            Bayar : <br/>
-            Kembali : <br/>
-            _____________________________________<br/>
+            <br/>
+            Total : {this.strukTotal}<br/>
+            Bayar : {this.strukBayar}<br/>
+            Kembali : {this.strukKembali}<br/>
+            <br/>
             Terimakasih atas kunjungannya
 
         </div>;
@@ -432,6 +451,8 @@ class Cashier extends Component {
     DialogPembayaran = () => {
         let total = this.hitungTotal();
         let kembali = this.state.kasihUang - total;
+        this.strukTotal =total;
+        this.strukKembali = kembali;
         return <Dialog fullWidth={true} maxWidth = {'md'} onClose={this.handlePembayaranClose} open={this.state.dialogPembayaran} aria-labelledby="simple-dialog-title">
         
             <DialogTitle id="simple-dialog-title">Pembayaran</DialogTitle> 
@@ -467,7 +488,24 @@ class Cashier extends Component {
     } 
     DialogStruk = () => {        
         return <Dialog fullWidth={true} maxWidth = {'md'} onClose={this.handleStrukClose} open={this.state.dialogStruk} aria-labelledby="simple-dialog-title">
-        
+                <Button
+                    type='submit'
+                    color='secondary'
+                    variant="contained"
+                    style={{width: '20%'}}
+                    onClick={()=>{
+                        var printContents = document.getElementById("printableArea").innerHTML;
+                        var originalContents = document.body.innerHTML;
+                   
+                        document.body.innerHTML = printContents;
+                   
+                        window.print();
+                   
+                        document.body.innerHTML = originalContents;
+                    }}
+                >
+                    Print
+                </Button>         
             <DialogTitle id="simple-dialog-title">Pembayaran</DialogTitle> 
                 <this.Struk />
         </Dialog>;

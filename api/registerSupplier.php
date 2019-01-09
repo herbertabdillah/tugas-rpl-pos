@@ -1,6 +1,6 @@
 <?php
 require "koneksi.php";
-
+$_POST = json_decode(file_get_contents('php://input'), true);
 $mysql = "INSERT INTO supplier
 (idSupplier, namaSupplier, alamatSupplier, kontakSupplier) VALUES
 ('$_POST[idSupplier]', '$_POST[namaSupplier]', '$_POST[alamatSupplier]', '$_POST[kontakSupplier]')";

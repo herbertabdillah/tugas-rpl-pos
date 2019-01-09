@@ -10,13 +10,10 @@
 			<form action="editStok.php" method="post">
 			<table width="487" border="0">
 			<input type="hidden" name="idBarang" value="<?php echo $buff['idBarang'];?>" />
+				
 				<tr>
-					<td width="150">Stok Gudang</td>
-					<td><input type="text" name="stokGudang" value="<?php echo $buff['stokGudang'];?>" /></td>
-				</tr>
-				<tr>
-					<td width="150">Stok Rak</td>
-					<td><input type="text" name="stokRak" value="<?php echo $buff['stokRak'];?>" /></td>
+					<td width="150">Stok Barang</td>
+					<td><input type="text" name="stok" value="<?php echo $buff['stok'];?>" /></td>
 				</tr>
 				<tr>
 					<td height="68" align="right"><input type="reset" value="reset" /></td>

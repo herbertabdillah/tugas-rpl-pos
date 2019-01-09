@@ -16,8 +16,7 @@
 			<tr>
 				<td width="5%"><center>ID Barang</td>
 				<td width="10%"><center>Nama Barang</td>
-				<td width="10%"><center>Stok Rak</td>
-				<td width="10%"><center>Stok Gudang</td>
+				<td width="10%"><center>Stok Barang</td>
 				<td width="5%">Aksi</td>
 			</tr>
 		
@@ -30,8 +29,7 @@
 				<tr>
 					<td width="5%"><center><?php echo $buff['idBarang'];?></td>
 					<td width="5%"><?php echo $buff['namaBarang'];?></td>
-					<td width="5%"><?php echo $buff['stokRak'];?></td>
-					<td width="5%"><?php echo $buff['stokGudang'];?></td>
+					<td width="5%"><?php echo $buff['stok'];?></td>
 					<td width="10%">
 					<a href="tambahStok.php?idBarang=<?php echo $buff['idBarang'];?>">Ubah Stok</a>
 				</tr>

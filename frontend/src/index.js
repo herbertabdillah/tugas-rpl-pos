@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import Cashier from './cashier/Cashier';
 import Supplier from './supplier/Supplier';
 import Barang from './barang/Barang';
+import Laporan from './laporan/Laporan';
 const theme = createMuiTheme({
     // palette: {
     //     primary: {
@@ -92,6 +93,7 @@ ReactDOM.render(
                     <Route path="/cashier" component={Cashier} />
                     <Route path="/supplier" component={Supplier} />
                     <Route path="/barang" component={Barang} />
+                    <Route path="/laporan" component={Laporan} />
                     {/* <Route path="/signin" component={SignIn} />
                     <Route path="/register" component={Register} />
                     <Route path="/park/view" component={View} />

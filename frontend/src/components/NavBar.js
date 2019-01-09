@@ -150,91 +150,32 @@ toggleDrawer = (side, open) => () => {
     const sideList = (
       <div className={classes.list}>
         <List>
-          <ListItem button>
-              <ListItemIcon><Description className={classes.icon} /></ListItemIcon>
-              <ListItemText primary="Laporan" />
-            </ListItem>
+            <Link to="/laporan">
+              <ListItem button>
+                {/* <ListItemIcon><Description className={classes.icon} /></ListItemIcon> */}
+                <ListItemText primary="Laporan" />
+              </ListItem>
+            </Link>
             <Link to="/cashier">
               <ListItem button>
-                <ListItemIcon><FormatListBulleted className={classes.icon} /></ListItemIcon>
+                {/* <ListItemIcon><FormatListBulleted className={classes.icon} /></ListItemIcon> */}
                 <ListItemText primary="Kasir" />
               </ListItem>  
             </Link>
             <Link to="/supplier">
               <ListItem button>
-                <ListItemIcon><FormatListBulleted className={classes.icon} /></ListItemIcon>
+                {/* <ListItemIcon><FormatListBulleted className={classes.icon} /></ListItemIcon> */}
                 <ListItemText primary="Supplier" />
               </ListItem>  
             </Link> 
             <Link to="/barang">
               <ListItem button>
-                <ListItemIcon><FormatListBulleted className={classes.icon} /></ListItemIcon>
+                {/* <ListItemIcon><FormatListBulleted className={classes.icon} /></ListItemIcon> */}
                 <ListItemText primary="Barang" />
               </ListItem>  
             </Link>   
         </List>
         <Divider />
-        {Auth.getUserData().role ==='admin' && (
-        <List>
-            <ListItem button>
-              <ListItemIcon><AccountCircle className={classes.icon} /></ListItemIcon>
-              <ListItemText primary="Menu Admin" />
-            </ListItem>
-            <Link to="/admin/park/add">
-              <ListItem button>
-                <ListItemIcon><NoteAdd className={classes.icon} /></ListItemIcon>
-                <ListItemText primary="Tambah Taman/Fasilitas" />
-              </ListItem>            
-            </Link>
-            <ListItem button>
-              <ListItemIcon><EditLocation className={classes.icon} /></ListItemIcon>
-              <ListItemText primary="Edit Taman/Fasilitas" />
-            </ListItem>                              
-        </List>          
-        )}
-
-
-      {/* </div> */}
-    {Auth.isLogin() ? (
-      <List>
-
-          <Link to="/profile">
-            <ListItem button>
-              
-              <ListItemText primary={Auth.getUserData().name} />
-            </ListItem>            
-          </Link>
-          {/* <Link to="/profile"> */}
-            <ListItem button onClick={this.handleLogout}>
-              
-              <ListItemText primary="Logout" />
-            </ListItem>            
-          {/* </Link> */}
-
-      </List>)
-      
-    :
-  
-  (  <List>
-
-    <Link to="/register">
-      <ListItem button>
-        
-        <ListItemText primary='Register' />
-      </ListItem>            
-    </Link>
-    {/* <Link to="/profile"> */}
-    <Link to="/signin">
-      <ListItem button>
-        
-        <ListItemText primary='Sign In' />
-      </ListItem>            
-    </Link>        
-    {/* </Link> */}
-
-</List>)}
-
-
     </div>
   );
 

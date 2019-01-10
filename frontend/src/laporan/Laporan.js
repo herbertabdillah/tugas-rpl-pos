@@ -28,6 +28,7 @@ import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
 import PropTypes from 'prop-types';
 import Auth from '../function/Auth';
+import {Bar} from 'react-chartjs-2';
 // import PropTypes, { instanceOf } from 'prop-types';
 
 import Cookies from "js-cookie";
@@ -36,7 +37,7 @@ class Cashier extends Component {
     constructor(props){
         super(props);
         this.state = {
-            laporanArr: [{"tanggal":"loading","pemasukan":0}],
+            laporanArr: [{"tanggal":"loading","pendapatan":0}],
             open: false,
             qtyOpen: false,        
             index: 0,
@@ -47,28 +48,69 @@ class Cashier extends Component {
             tambahAlamat: '',
             filterNama: '',
             mode:'',
-            awal:'2019-01-01',
-            akhir: '2019-01-08',
-            pemasukan: 0
+            awal:'2018-01-01',
+            akhir: '2020-01-08',
+            pendapatan: 0,
+            rata:0,
+            listTanggal: [],
+            listPendapatan: []
         }
     }
     componentDidMount(){
-        let laporanArr = [
-            {
-                "tanggal": "2017-01-01",
-                "pemasukan": 60000
-            },
-            {
-                "tanggal": "2017-01-02",
-                "pemasukan": 95000
+        this.fetchLaporan();
+        // let laporanArr = [
+        //     {
+        //         "tanggal": "2017-01-01",
+        //         "pendapatan": 60000
+        //     },
+        //     {
+        //         "tanggal": "2017-01-02",
+        //         "pendapatan": 95000
+        //     }
+        // ];
+
+    // this.setState({pendapatan:total});
+    //     this.setState({laporanArr:laporanArr});    
+    }
+    fetchLaporan = () => {
+        let listTanggal = [];
+        let listPendapatan = [];
+        let postData = {
+            awal:this.state.awal,
+            akhir:this.state.akhir
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
             }
-        ];
-        let total = 0;
-        laporanArr.map((laporan)=>{
-            total += laporan.pemasukan;
-        });
-    this.setState({pemasukan:total});
-        this.setState({laporanArr:laporanArr});    
+        };
+        axios.post('tugas-rpl-pos/api/laporan.php',
+        postData, axiosConfig).then(
+            response => {
+                // console.log(response);
+                // this.setState({
+                //     itemArr: response.data.records
+                // });
+                // console.log(this.state.suppliers);
+                let total = 0;
+                let rata = 0;
+                this.setState({laporanArr:response.data}, ()=>{
+                    
+                    this.state.laporanArr.map((laporan)=>{
+                        listTanggal.push(laporan.tanggal);
+                        listPendapatan.push(laporan.pendapatan);
+                        total += Number.parseFloat(laporan.pendapatan);
+                    });
+                });
+                rata = total / this.state.laporanArr.length;
+                this.setState({pendapatan:total,rata:rata, listTanggal: listTanggal, listPendapatan: listPendapatan})
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );             
     }
     prosesTambahSupplier = () => {
         let laporanArr = this.state.laporanArr;
@@ -190,13 +232,7 @@ class Cashier extends Component {
                         variant="contained"
                         fullWidth
                         onClick={()=>{
-                            this.setState({
-                                mode:'add',
-                                tambahNama: '',
-                                tambahKontak: '',
-                                tambahAlamat: ''
-                            });
-                            this.handleQtyClickOpen();
+                            this.fetchLaporan();
                         }}
                         >
                             Proses Laporan
@@ -208,7 +244,17 @@ class Cashier extends Component {
                         color='primary'
                         variant="contained"
                         fullWidth
-                        onClick={()=>{this.prosesHapusSupplier();}}
+                        onClick={()=>{
+                            this.fetchLaporan();
+                            var printContents = document.getElementById("printableArea").innerHTML;
+                            var originalContents = document.body.innerHTML;
+                       
+                            document.body.innerHTML = printContents;
+                       
+                            window.print();
+                       
+                            document.body.innerHTML = originalContents;
+                        }}
                         >
                             Cetak Laporan
                         </Button>                      
@@ -228,7 +274,7 @@ class Cashier extends Component {
                             Tanggal
                         </TableCell>
                         <TableCell>
-                            Pemasukan
+                            pendapatan
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -239,7 +285,7 @@ class Cashier extends Component {
                             return(
                                 <TableRow>
                                     <TableCell>{supplier.tanggal}</TableCell>
-                                    <TableCell>{supplier.pemasukan}</TableCell>
+                                    <TableCell>{supplier.pendapatan}</TableCell>
                                 </TableRow>
                             );
                         }
@@ -262,7 +308,7 @@ class Cashier extends Component {
                 type="date"
                 defaultValue="2017-05-24"
             />
-            &nbsp;sampai&nbsp;
+            <br/>
             <TextField
                 name="akhir"
                 value={this.state.akhir}
@@ -271,16 +317,44 @@ class Cashier extends Component {
                 type="date"
                 defaultValue="2017-05-25"
             />
-            <br/>
+            <br/><br/>
             <Typography variant="h5">
-                Pemasukan
+                Pendapatan
             </Typography>
             <Typography variant="h6">
-                {this.state.pemasukan}
+                {this.state.pendapatan}
+            </Typography>
+            <br/>
+            <Typography variant="h5">
+                Rata-rata per Hari
+            </Typography>
+            <Typography variant="h6">
+                {this.state.rata}
             </Typography>
         </div>;
     }
+    Grafik = () => {
 
+        return <div>
+            <Bar data={{
+                 labels: this.state.listTanggal,
+                 datasets: [{
+                     label: 'penapatan',
+                     data: this.state.listPendapatan
+                 }]
+            }} options={
+                {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            }/>
+        </div>
+    }
     render(props){
       
 
@@ -298,19 +372,25 @@ class Cashier extends Component {
                 </div>        
                 <div className='content80' center={1}> 
                       <this.DialogQty />
-                      <this.TombolAtas />                  
-                      <Grid container spacing={24} style={{marginTop:'16px'}}>
-                        <Grid item xs={8} sm={8} md={8} xl={8}>
-                            <Paper>
-                                <this.ItemTable />
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={4} sm={4} md={4} xl={4}>
-                            <Paper style={{padding:24}}>
-                                <this.PanelKanan />
-                            </Paper>
-                        </Grid>
-                      </Grid>
+                      <this.TombolAtas />             
+                      <div id="printableArea">
+                        <Grid container spacing={24} style={{marginTop:'16px'}}>
+                            <Grid item xs={8} sm={8} md={8} xl={8}>
+                                <Paper>
+                                    <this.Grafik />
+                                </Paper>
+                                <Paper style={{marginTop:'24px'}}>
+                                    <this.ItemTable />
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={4} sm={4} md={4} xl={4}>
+                                <Paper style={{padding:24}}>
+                                    <this.PanelKanan />
+                                </Paper>
+                            </Grid>
+                        </Grid>                      
+                      </div>
+
                       
                       
                 </div>

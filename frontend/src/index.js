@@ -89,7 +89,7 @@ ReactDOM.render(
             <div className='root2'>
                 
                     <NavBar />
-                    <Route exact path="/" component={App} />
+                    <Route exact path="/" component={Laporan} />
                     <Route path="/cashier" component={Cashier} />
                     <Route path="/supplier" component={Supplier} />
                     <Route path="/barang" component={Barang} />

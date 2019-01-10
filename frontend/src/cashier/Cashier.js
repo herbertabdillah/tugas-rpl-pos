@@ -36,8 +36,8 @@ class Cashier extends Component {
     constructor(props){
         super(props);
         this.state = {
-            itemArr: [{"sku":0,"name":"loading","price":0, "index":0}],
-            selectedItemArr: [{"index":0,"qty":0}],
+            itemArr: [{"sku":0,"nama":"loading","harga":0, "index":0}],
+            selectedItemArr: [],
             open: false,
             qtyOpen: false,
             dialogType: 'add',
@@ -56,44 +56,104 @@ class Cashier extends Component {
         }
     }
     componentDidMount(){
-        let itemArr = [
-            {
-                "sku": 123,
-                "name": "Kopi Liong Gula 20 Sachet",
-                "price": 21000,
-                "index": 0
-            },
-            {
-                "sku": 124,
-                "name": "Kopi Liong Pahit 20 Sachet",
-                "price": 21000,
-                "index": 1
-            },
-            {
-                "sku": 234,
-                "name": "Kapal Api 20 Sachet",
-                "price": 23000,
-                "index": 2
-            },
-            {
-                "sku": 456,
-                "name": "Roti Pandan",
-                "price": 1000,
-                "index": 3
-            }    
-        ];
-        this.setState({itemArr:itemArr});
-        let selectedItemArr = [
-            {
-                "index": 0,
-                "qty": 2
-            },
-            {
-                "index": 1,
-                "qty": 3
+        // let itemArr = [
+        //     {
+        //         "sku": 123,
+        //         "name": "Kopi Liong Gula 20 Sachet",
+        //         "price": 21000,
+        //         "index": 0
+        //     },
+        //     {
+        //         "sku": 124,
+        //         "name": "Kopi Liong Pahit 20 Sachet",
+        //         "price": 21000,
+        //         "index": 1
+        //     },
+        //     {
+        //         "sku": 234,
+        //         "name": "Kapal Api 20 Sachet",
+        //         "price": 23000,
+        //         "index": 2
+        //     },
+        //     {
+        //         "sku": 456,
+        //         "name": "Roti Pandan",
+        //         "price": 1000,
+        //         "index": 3
+        //     }    
+        // ];
+        // this.setState({itemArr:itemArr});
+        // let selectedItemArr = [
+        //     {
+        //         "index": 0,
+        //         "qty": 2
+        //     },
+        //     {
+        //         "index": 1,
+        //         "qty": 3
+        //     }
+        // ];
+        // this.setState({selectedItemArr:selectedItemArr});
+        this.fetchBarang();
+    }
+    transaksi = () => {
+        let laporan = [];
+        this.state.selectedItemArr.map((item)=>{
+            let barangLengkap = this.state.itemArr[item.index];
+            laporan.push({
+                "idBarang":barangLengkap.sku,
+                "jumlahBarang":item.qty,
+                "totalHarga": (item.qty * barangLengkap.harga)
+            });
+        });
+        let postData = {
+            laporan:laporan
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
             }
-        ];
-        this.setState({selectedItemArr:selectedItemArr});
+        };
+        axios.post('tugas-rpl-pos/api/beli.php',
+        postData, axiosConfig).then(
+            response => {
+                // console.log(response);
+                // this.setState({
+                //     itemArr: response.data.records
+                // });
+                // console.log(this.state.suppliers);
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );        
+    }
+    fetchBarang = () => {
+        let postData = {
+        
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/lihat.php',
+        postData, axiosConfig).then(
+            response => {
+                console.log(response);
+                this.setState({
+                    itemArr: response.data.records
+                });
+                console.log(this.state.suppliers);
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
     }
     handleChange = (e) => {
         this.setState({
@@ -163,8 +223,8 @@ class Cashier extends Component {
             <br/>
             {this.state.selectedItemArr.map((selectedItem) => {
                 let item = this.state.itemArr[selectedItem.index];
-                let nama = item.name;
-                let harga = item.price;
+                let nama = item.nama;
+                let harga = item.harga;
                 let qty = selectedItem.qty;
                 let total = harga * qty;
                 return <div>        
@@ -200,7 +260,13 @@ class Cashier extends Component {
     }
     deleteItem = (index)=>{
         let selectedItemArr = this.state.selectedItemArr;
-        selectedItemArr.splice(index, 1);
+        let indexHapus;
+        selectedItemArr.map((item, indexSelected)=>{
+            if(item.index === index){
+                indexHapus = indexSelected;
+            }
+        })
+        selectedItemArr.splice(indexHapus, 1);
         this.setState({selectedItemArr:selectedItemArr});
     }
     changeQty = () => {
@@ -328,7 +394,7 @@ class Cashier extends Component {
                     {this.state.selectedItemArr.filter(
                         (item) => {
                             let patternNama = new RegExp(this.state.filterNama, 'i')
-                            return patternNama.test(this.state.itemArr[item.index].name);
+                            return patternNama.test(this.state.itemArr[item.index].nama);
                         }
                     ).map(
                         (item) => {
@@ -342,10 +408,10 @@ class Cashier extends Component {
                                     })
                                 }}>
                                     <TableCell>{asdf.sku}</TableCell>
-                                    <TableCell>{asdf.name}</TableCell>
-                                    <TableCell>{asdf.price}</TableCell>
+                                    <TableCell>{asdf.nama}</TableCell>
+                                    <TableCell>{asdf.harga}</TableCell>
                                     <TableCell>{item.qty}</TableCell>
-                                    <TableCell>{item.qty * asdf.price}</TableCell>
+                                    <TableCell>{item.qty * asdf.harga}</TableCell>
                                 </TableRow>
                             );
                         }
@@ -355,18 +421,22 @@ class Cashier extends Component {
         );
     }
     hitungTotal = () => {
-        let total = 0;
-        this.state.selectedItemArr.filter(
-            (item) => {
-                return true;
-            }
-        ).map(
-            (item) => {
-                let asdf = this.state.itemArr[item.index];
-                total = total + (asdf.price * item.qty);
-            }
-        )
-        return total;
+        if(this.state.selectedItemArr.length === 0) return 0;
+        else{
+            let total = 0;
+            this.state.selectedItemArr.filter(
+                (item) => {
+                    return true;
+                }
+            ).map(
+                (item) => {
+                    let asdf = this.state.itemArr[item.index];
+                    total = total + (asdf.harga * item.qty);
+                }
+            )
+            return total;        
+        }
+
     }
     Total = () => {
         let total = this.hitungTotal()
@@ -422,7 +492,7 @@ class Cashier extends Component {
                         {this.state.itemArr.filter(
                             (item) => {
                                 let regex = new RegExp(this.state.newItemFind, 'i');
-                                return regex.test(item.name);
+                                return regex.test(item.nama);
                             }
                         ).map(
                             (item) => {
@@ -435,8 +505,8 @@ class Cashier extends Component {
                                         this.handleClose();
                                     }}>
                                         <TableCell>{item.sku}</TableCell>
-                                        <TableCell>{item.name}</TableCell>
-                                        <TableCell>{item.price}</TableCell>
+                                        <TableCell>{item.nama}</TableCell>
+                                        <TableCell>{item.harga}</TableCell>
                                     </TableRow>
                                 );
                             }
@@ -464,6 +534,8 @@ class Cashier extends Component {
                     onClick={()=>{
                         this.handlePembayaranClose();
                         this.handleStrukClickOpen();
+                        this.transaksi();
+                        this.strukBayar = this.state.kasihUang;
                     }}
                 >
                     Lanjut

@@ -234,7 +234,7 @@ toggleDrawer = (side, open) => () => {
 			  >
 				{/* <AccountCircle /> */}
 				<Typography variant="h6" color="inherit" className={classes.grow}>
-				Login/Register
+				{/* Login/Register */}
             </Typography>
 				
 			  </IconButton>

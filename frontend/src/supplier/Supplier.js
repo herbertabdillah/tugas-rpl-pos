@@ -46,55 +46,146 @@ class Cashier extends Component {
             tambahKontak: '',
             tambahAlamat: '',
             filterNama: '',
-            mode:''
+            mode:'',
+            idSelected :''
         }
     }
     componentDidMount(){
-        let suppliersArr = [
-            {
-                "kode": 1,
-                "nama": "Bakti Karya",
-                "alamat": "Jalan Abdul Wahab",
-                "kontak": "021 77881122",
-                "index": 0
-            },
-            {
-                "kode": 2,
-                "nama": "Indogrosir",
-                "alamat": "Jalan Raya Parung",
-                "kontak": "021 77992233",
-                "index": 1
+        // let suppliersArr = [
+        //     {
+        //         "kode": 1,
+        //         "nama": "Bakti Karya",
+        //         "alamat": "Jalan Abdul Wahab",
+        //         "kontak": "021 77881122",
+        //         "index": 0
+        //     },
+        //     {
+        //         "kode": 2,
+        //         "nama": "Indogrosir",
+        //         "alamat": "Jalan Raya Parung",
+        //         "kontak": "021 77992233",
+        //         "index": 1
+        //     }
+        // ];
+        // this.setState({suppliers:suppliersArr});    
+        this.fetchSuplier();
+    }
+    fetchSuplier = () => {
+        let postData = {
+        
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
             }
-        ];
-        this.setState({suppliers:suppliersArr});    
+        };
+        axios.post('tugas-rpl-pos/api/lihatSupplier.php',
+        postData, axiosConfig).then(
+            response => {
+                console.log(response);
+                this.setState({
+                    suppliers: response.data.records
+                });
+                console.log(this.state.suppliers);
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
     }
     prosesTambahSupplier = () => {
-        let suppliersArr = this.state.suppliers;
-        var i = suppliersArr[suppliersArr.length - 1].kode + 1;
-        var j = suppliersArr[suppliersArr.length - 1].index + 1;
-        suppliersArr.push({
-            "kode": i,
-            "nama": this.state.tambahNama,
-            "alamat": this.state.tambahAlamat,
-            "kontak": this.state.tambahKontak,
-            "index": j
-        });
-        this.setState({suppliers: suppliersArr});
+        // let suppliersArr = this.state.suppliers;
+        // var i = suppliersArr[suppliersArr.length - 1].kode + 1;
+        // var j = suppliersArr[suppliersArr.length - 1].index + 1;
+        // suppliersArr.push({
+        //     "kode": i,
+        //     "nama": this.state.tambahNama,
+        //     "alamat": this.state.tambahAlamat,
+        //     "kontak": this.state.tambahKontak,
+        //     "index": j
+        // });
+        // this.setState({suppliers: suppliersArr});
+        let postData = {
+            "namaSupplier": this.state.tambahNama,
+            "alamatSupplier": this.state.tambahAlamat,
+            "kontakSupplier": this.state.tambahKontak
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/registerSupplier.php',
+        postData, axiosConfig).then(
+            response => {
+                this.fetchSuplier();
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
     }
     prosesEditSupplier = () => {
-        let suppliersArr = this.state.suppliers;
-        suppliersArr[this.state.selected] = {
-            "kode": suppliersArr[this.state.selected].kode,
-            "nama": this.state.tambahNama,
-            "alamat": this.state.tambahAlamat,
-            "kontak": this.state.tambahKontak,
+        // let suppliersArr = this.state.suppliers;
+        // suppliersArr[this.state.selected] = {
+        //     "kode": suppliersArr[this.state.selected].kode,
+        //     "nama": this.state.tambahNama,
+        //     "alamat": this.state.tambahAlamat,
+        //     "kontak": this.state.tambahKontak,
+        // };
+        // this.setState({suppliers: suppliersArr});
+        let postData = {
+            "namaSupplier": this.state.tambahNama,
+            "alamatSupplier": this.state.tambahAlamat,
+            "kontakSupplier": this.state.tambahKontak,
         };
-        this.setState({suppliers: suppliersArr});
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/edit2Supplier.php?idSupplier=' + this.state.idSelected,
+        postData, axiosConfig).then(
+            response => {
+
+                this.fetchSuplier();
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
+
     }
     prosesHapusSupplier = () => {
-        let suppliersArr = this.state.suppliers;
-        suppliersArr.splice(this.state.selected, 1);
-        this.setState({suppliers: suppliersArr, selected:0});
+        // let suppliersArr = this.state.suppliers;
+        // suppliersArr.splice(this.state.selected, 1);
+        // this.setState({suppliers: suppliersArr, selected:0});
+        let postData = {
+
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/hapusSupplier.php?idSupplier=' + this.state.idSelected,
+        postData, axiosConfig).then(
+            response => {
+
+                this.fetchSuplier();
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
     }        
     handleChange = (e) => {
         this.setState({
@@ -253,8 +344,9 @@ class Cashier extends Component {
                             return(
                                 <TableRow key={supplier.kode} onClick={()=> {
                                     let index = supplier.index;
-                                    this.setState({selected:index});
                                     let selectedSupplier = this.state.suppliers[index];
+                                    this.setState({selected:index, idSelected:selectedSupplier.kode});
+                                    
                                     this.setState({
                                         tambahNama: selectedSupplier.nama,
                                         tambahAlamat: selectedSupplier.alamat,

@@ -5,13 +5,15 @@
 		$hasil=mysqli_query($conn, $select);
 		$products_arr["records"]=array();
 		$products_arr=array();
-		for($i=1;$buff=mysqli_fetch_array($hasil);$i++){
+		for($i=0;$buff=mysqli_fetch_array($hasil);$i++){
 			 $product_item=array(
 			
-			"idBarang" => $buff['idBarang'],
-            "namaBarang" => $buff['namaBarang'],
-            "hargaBarang" => $buff['hargaBarang'],
-            "idSupplier" => $buff['idSupplier']
+			"sku" => $buff['idBarang'],
+            "nama" => $buff['namaBarang'],
+            "harga" => $buff['hargaBarang'],
+			"supplier" => $buff['idSupplier'],
+			"stok" => $buff['stok'],
+			"index" => $i
         );
 		
 		$products_arr["records"][] = $product_item;	

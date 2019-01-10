@@ -56,86 +56,217 @@ class Cashier extends Component {
         }
     }
     componentDidMount(){
-        let suppliersArr = [
-            {
-                "kode": 1,
-                "nama": "Bakti Karya",
-                "alamat": "Jalan Abdul Wahab",
-                "kontak": "021 77881122",
-                "index": 0
-            },
-            {
-                "kode": 2,
-                "nama": "Indogrosir",
-                "alamat": "Jalan Raya Parung",
-                "kontak": "021 77992233",
-                "index": 1
-            } 
-        ];
-        let barangArr = [
-            {
-                "sku": 123,
-                "nama": "Kopi Liong Gula 20 Sachet",
-                "harga": 21000,
-                "stok": 20,
-                "supplier": 1,
-                "index": 0
-            },
-            {
-                "sku": 124,
-                "nama": "Kopi Liong Pahit 20 Sachet",
-                "harga": 21000,
-                "stok": 20,
-                "supplier": 1,
-                "index": 1
-            },
-            {
-                "sku": 234,
-                "nama": "Kapal Api 20 Sachet",
-                "harga": 23000,
-                "stok": 20,
-                "supplier": 0,
-                "index": 2
-            },
-            {
-                "sku": 456,
-                "nama": "Roti Pandan",
-                "harga": 1000,
-                "stok": 20,
-                "supplier": 0,
-                "index": 3
-            }  
-        ];
-        this.setState({suppliersArr: suppliersArr, barangArr: barangArr});    
+        // let suppliersArr = [
+        //     {
+        //         "kode": 1,
+        //         "nama": "Bakti Karya",
+        //         "alamat": "Jalan Abdul Wahab",
+        //         "kontak": "021 77881122",
+        //         "index": 0
+        //     },
+        //     {
+        //         "kode": 2,
+        //         "nama": "Indogrosir",
+        //         "alamat": "Jalan Raya Parung",
+        //         "kontak": "021 77992233",
+        //         "index": 1
+        //     } 
+        // ];
+        // let barangArr = [
+        //     {
+        //         "sku": 123,
+        //         "nama": "Kopi Liong Gula 20 Sachet",
+        //         "harga": 21000,
+        //         "stok": 20,
+        //         "supplier": 1,
+        //         "index": 0
+        //     },
+        //     {
+        //         "sku": 124,
+        //         "nama": "Kopi Liong Pahit 20 Sachet",
+        //         "harga": 21000,
+        //         "stok": 20,
+        //         "supplier": 1,
+        //         "index": 1
+        //     },
+        //     {
+        //         "sku": 234,
+        //         "nama": "Kapal Api 20 Sachet",
+        //         "harga": 23000,
+        //         "stok": 20,
+        //         "supplier": 0,
+        //         "index": 2
+        //     },
+        //     {
+        //         "sku": 456,
+        //         "nama": "Roti Pandan",
+        //         "harga": 1000,
+        //         "stok": 20,
+        //         "supplier": 0,
+        //         "index": 3
+        //     }  
+        // ];
+        this.fetchSuplier();  
+        this.fetchBarang();  
+    }
+    getSupplier = (id) => {
+        let isFound = false;
+        let foundReturn;
+        this.state.suppliersArr.map((supplier, index)=>{
+            if(supplier.kode === id) {
+                isFound = true;
+                foundReturn =  this.state.suppliersArr[index];
+            }
+        });
+        console.log(id);
+        console.log(isFound);
+        console.log(foundReturn);
+        if(!isFound) return this.state.suppliersArr[0];
+        return foundReturn;
+    };
+    fetchBarang = () => {
+        let postData = {
+        
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/lihat.php',
+        postData, axiosConfig).then(
+            response => {
+                console.log(response);
+                this.setState({
+                    barangArr: response.data.records
+                });
+                console.log(this.state.suppliers);
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
+    }
+    fetchSuplier = () => {
+        let postData = {
+        
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/lihatSupplier.php',
+        postData, axiosConfig).then(
+            response => {
+                console.log(response);
+                this.setState({
+                    suppliersArr: response.data.records
+                });
+                console.log(this.state.suppliers);
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
     }
     prosesTambahBarang = () => {
-        let barangArr = this.state.barangArr;
-        let j = this.state.barangArr[this.state.barangArr.length - 1].index + 1;
-        barangArr.push({
-            "sku": this.state.tambahSku,
-            "nama": this.state.tambahNama,
-            "harga": this.state.tambahHarga,
+        // let barangArr = this.state.barangArr;
+        // let j = this.state.barangArr[this.state.barangArr.length - 1].index + 1;
+        // barangArr.push({
+        //     "sku": this.state.tambahSku,
+        //     "nama": this.state.tambahNama,
+        //     "harga": this.state.tambahHarga,
+        //     "stok": this.state.tambahStok,
+        //     "supplier": this.state.selectedSupplierIndex,
+        //     "index": j
+        // });
+        // this.setState({barangArr: barangArr});
+        let postData = {
+            "idBarang": this.state.tambahSku,
             "stok": this.state.tambahStok,
-            "supplier": this.state.selectedSupplierIndex,
-            "index": j
-        });
-        this.setState({barangArr: barangArr});
+            "namaBarang": this.state.tambahNama,
+            "hargaBarang": this.state.tambahHarga,
+            "idSupplier": this.state.suppliersArr[this.state.selectedSupplierIndex].kode
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/register.php',
+        postData, axiosConfig).then(
+            response => {
+                this.fetchBarang();
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
     }
     prosesEditBarang = () => {
-        let barangArr = this.state.barangArr;
-        barangArr[this.state.selected] = {
-            "sku": this.state.tambahSku,
-            "nama": this.state.tambahNama,
-            "harga": this.state.tambahHarga,
+        // let barangArr = this.state.barangArr;
+        // barangArr[this.state.selected] = {
+        //     "sku": this.state.tambahSku,
+        //     "nama": this.state.tambahNama,
+        //     "harga": this.state.tambahHarga,
+        //     "stok": this.state.tambahStok,
+        //     "supplier": this.state.selectedSupplierIndex
+        // };
+        // this.setState({barangArr: barangArr});
+        let postData = {
+            "idBarang": this.state.tambahSku,
             "stok": this.state.tambahStok,
-            "supplier": this.state.selectedSupplierIndex
+            "namaBarang": this.state.tambahNama,
+            "hargaBarang": this.state.tambahHarga,
+            "idSupplier": this.state.suppliersArr[this.state.selectedSupplierIndex].kode
         };
-        this.setState({barangArr: barangArr});
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/edit2.php',
+        postData, axiosConfig).then(
+            response => {
+                this.fetchBarang();
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
     }
     prosesHapusBarang = () => {
-        let barangArr = this.state.barangArr;
-        barangArr.splice(this.state.selected, 1);
-        this.setState({barangArr: barangArr, selected:0});
+        // let barangArr = this.state.barangArr;
+        // barangArr.splice(this.state.selected, 1);
+        // this.setState({barangArr: barangArr, selected:0});
+        let postData = {
+            "idBarang": this.state.barangArr[this.state.selected].sku
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/hapus.php',
+        postData, axiosConfig).then(
+            response => {
+                this.fetchBarang();
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
     }        
     handleChange = (e) => {
         this.setState({
@@ -162,10 +293,30 @@ class Cashier extends Component {
       };
       prosesTambahStok = () => {
           let barangArr = this.state.barangArr;
-          let stokSebelum = barangArr[this.state.selected].stok;
+          let stokSebelum = Number.parseInt(barangArr[this.state.selected].stok);
           let stokTambah = Number.parseInt(this.state.editStok);
-          barangArr[this.state.selected].stok = stokSebelum + stokTambah;
-          this.setState({barangArr: barangArr});
+          let stokBaru = stokSebelum + stokTambah;
+        //   this.setState({barangArr: barangArr});
+        let postData = {
+            "idBarang": this.state.barangArr[this.state.selected].sku,
+            "stok": stokBaru
+        };
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                // "Access-Control-Allow-Origin": "*",
+            }
+        };
+        axios.post('tugas-rpl-pos/api/editStok.php',
+        postData, axiosConfig).then(
+            response => {
+                this.fetchBarang();
+            }
+        ).catch(
+            function(error){
+                console.log(error);
+            }
+        );
       }
       DialogStok = (props) => {
 
@@ -407,7 +558,7 @@ class Cashier extends Component {
                                     <TableCell>{barang.nama}</TableCell>
                                     <TableCell>{barang.stok}</TableCell>
                                     <TableCell>{barang.harga}</TableCell>
-                                    <TableCell>{this.state.suppliersArr[barang.supplier].nama}</TableCell>
+                                    <TableCell>{this.getSupplier(barang.supplier).nama}</TableCell>
                                 </TableRow>
                             );
                         }
@@ -431,10 +582,10 @@ class Cashier extends Component {
             <Typography variant="h5">
                 Info Supplier
             </Typography>
-            Nama :  {this.state.suppliersArr[indexSupplier].nama} <br/>
-            Kode : {this.state.suppliersArr[indexSupplier].kode} <br/>
-            Alamat : {this.state.suppliersArr[indexSupplier].alamat} <br/>
-            Kontak : {this.state.suppliersArr[indexSupplier].kontak} <br/>
+            Nama :  {this.getSupplier(this.state.barangArr[selected].supplier).nama} <br/>
+            Kode : {this.getSupplier(this.state.barangArr[selected].supplier).kode} <br/>
+            Alamat : {this.getSupplier(this.state.barangArr[selected].supplier).alamat} <br/>
+            Kontak : {this.getSupplier(this.state.barangArr[selected].supplier).kontak} <br/>
         </div>;
     }
 
